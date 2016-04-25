@@ -40,8 +40,22 @@ def extract_names(filename):
   followed by the name-rank strings in alphabetical order.
   ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
   """
-  # +++your code here+++
-  return
+  names = []
+  bn_dict = {}
+  f = open(filename, 'rU')
+  s = f.read()
+  f.close()
+  # extract year
+  match_year = re.search(r'Popularity in (\d\d\d\d)',s)
+  year = match_year.group(1)
+  names.append(year)
+  m_data=re.findall(r'<tr align="right"><td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>',s)
+  for data in m_data:
+    bn_dict[data[1]] = data[0]
+    bn_dict[data[2]] = data[0]
+  for key in sorted(bn_dict.keys()):
+    names.append(key + " " + bn_dict[key])
+  return names
 
 
 def main():
@@ -63,6 +77,19 @@ def main():
   # +++your code here+++
   # For each filename, get the names, then either print the text output
   # or write it to a summary file
-  
+  for file in args[0:]:
+    names = extract_names(file)
+
+    # Make text out of the whole list
+    text = '\n'.join(names)
+
+    if summary:
+      outf = open(file + '.summary', 'w')
+      outf.write(text + '\n')
+      outf.close()
+    else:
+      print text
+
+
 if __name__ == '__main__':
   main()
